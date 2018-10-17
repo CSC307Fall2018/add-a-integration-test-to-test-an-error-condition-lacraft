@@ -4,6 +4,7 @@ const truncate = require('../truncate');
 const { ToDo } = require('../../models');
 
 const rootPath = '/todos';
+const fakePath = '/fake';
 
 describe('/todos', () => {
 
@@ -22,6 +23,12 @@ describe('/todos', () => {
         .expect((response) => {
           return expect(response.body.todos).toEqual([]);
         });
+    });
+
+    it('should return error 404', () => {
+      return request(app)
+        .get(fakePath)
+        .expect((404))
     });
 
     it('should return 1 item in the array', () => {
@@ -48,4 +55,16 @@ describe('/todos', () => {
         });
     });
   });
-});
+
+  describe('DELETE /', () => {
+    it('should delete an one todo', () => {
+      return ToDo.create({
+        subject: 'test'
+      }).then((item) => {
+          return request(app).delete(rootPath + '/' + item.id).expect((response) => {
+            return expect(response.body.delete).toEqual(true);
+          });
+      });
+    });
+  });
+  });
